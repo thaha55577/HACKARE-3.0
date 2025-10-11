@@ -4,8 +4,9 @@ import { getDatabase } from 'firebase/database';
 
 // TODO: Replace the following with your app's Firebase project configuration
 // This is the object you will get from the Firebase console.
-const firebaseConfig = {
-  apiKey: "AIzaSyC7EPnxkdnIP6G_2LLVthlUdiPhYGBpitg",
+
+  const firebaseConfig = {
+ apiKey: "AIzaSyC7EPnxkdnIP6G_2LLVthlUdiPhYGBpitg",
   authDomain: "hack-heist-70c4a.firebaseapp.com",
   projectId: "hack-heist-70c4a",
   storageBucket: "hack-heist-70c4a.firebasestorage.app",

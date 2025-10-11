@@ -91,7 +91,7 @@ const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ user, onLogout 
     if (!participant) {
       setScanResult({ type: 'error', text: `Participant with ID "${scannedText}" not found.` });
     } else {
-      const sessionKey = `session${selectedSession}` as keyof AttendanceRecord;
+      const sessionKey = `review${selectedSession}` as keyof AttendanceRecord;
       if (participant[sessionKey] === true) {
         setScanResult({ type: 'warning', text: `${participant.name} is already marked as PRESENT.` });
       } else {
@@ -107,7 +107,7 @@ const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ user, onLogout 
       setScanResult(null);
       setIsProcessingScan(false);
       // Restart scanner only if the tab is still active and there was a success/warning
-      if (activeTab === 'scan' && (!participant || participant[`session${selectedSession}` as keyof AttendanceRecord] !== true)) {
+      if (activeTab === 'scan' && (!participant || participant[`review${selectedSession}` as keyof AttendanceRecord] !== true)) {
           scannerStartRef.current();
       }
     }, 4000);
@@ -157,7 +157,7 @@ const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ user, onLogout 
     }
     const participant = attendanceRecords.find(record => record.regNo.toLowerCase() === manualRegNo.trim().toLowerCase());
     if (participant) {
-      const sessionKey = `session${selectedSession}` as keyof AttendanceRecord;
+      const sessionKey = `review${selectedSession}` as keyof AttendanceRecord;
       if (participant[sessionKey] === true) {
         setManualEntryMessage({ type: 'error', text: `${participant.name} is already marked as PRESENT.` });
         return;
@@ -173,7 +173,7 @@ const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ user, onLogout 
   const exportToCSV = () => {
     const sessionStatusKey = `session${exportSession}` as keyof AttendanceRecord;
     const markedByKey = `session${exportSession}_markedBy` as keyof AttendanceRecord;
-    const headers = ['Registration_No', 'Name', 'Email', 'Team', `Session${exportSession}_Status`, 'Marked_By', 'Last_Updated'];
+    const headers = ['Registration_No', 'Name', 'Email', 'Team', `session${exportSession}_Status`, 'Marked_By', 'Last_Updated'];
     const sessionAttendees = attendanceRecords.filter(record => record[sessionStatusKey] === true);
     if (sessionAttendees.length === 0) {
       alert(`No participants have been marked PRESENT for Session ${exportSession} yet.`);
@@ -191,7 +191,7 @@ const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ user, onLogout 
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `hack-heist-session${exportSession}-attendance-${new Date().toISOString().split('T')[0]}.csv`;
+    a.download = `hack-heist-review${exportSession}-attendance-${new Date().toISOString().split('T')[0]}.csv`;
     document.body.appendChild(a); a.click();
     window.URL.revokeObjectURL(url); document.body.removeChild(a);
   };
@@ -287,7 +287,7 @@ const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ user, onLogout 
               <h2 className="text-2xl font-bold text-gfg-text-light font-heading tracking-wider">Attendance Records</h2>
               <div className="flex items-center gap-2 w-full sm:w-auto">
                 <select value={exportSession} onChange={(e) => setExportSession(Number(e.target.value))} className="px-3 py-2 bg-gfg-card-bg border border-gfg-border rounded-lg text-gfg-text-light focus:border-gfg-gold focus:ring-1 focus:ring-gfg-gold outline-none font-body">
-                  <option value={1}>Export Session 1</option><option value={2}>Export Session 2</option><option value={3}>Export Session 3</option>
+                  <option value={1}>Export session 1</option><option value={2}>Export session 2</option><option value={3}>Export session 3</option>
                 </select>
                 <button onClick={exportToCSV} className="flex flex-grow items-center justify-center space-x-2 bg-gfg-gold hover:bg-gfg-gold-hover text-gfg-card-bg px-4 py-2 rounded-lg transition-colors uppercase font-heading"><Download className="w-4 h-4" /><span>Export</span></button>
               </div>
