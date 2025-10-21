@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Users, AlertCircle } from 'lucide-react';
 import { User } from '../types';
-import gfgLogo from '/gfg_logo.png';
+import NeuralBackground from './NeuralBackground';
+import AnimatedLogo from './AnimatedLogo';
+
+// Resolve base URL safely (cast import.meta to any to avoid TS errors in workspaces without vite types)
+const BASE_URL = ((import.meta as any).env && (import.meta as any).env.BASE_URL) || '/';
+const logo = `${BASE_URL}ACM_LOGO.png`;
 
 // The parseCSV function is needed again to process the file
 const parseCSV = (csvText: string): any[] => {
@@ -32,7 +37,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
   useEffect(() => {
     const loadOrganizers = async () => {
       try {
-        const response = await fetch(`${import.meta.env.BASE_URL}Organizers.csv`);
+  const response = await fetch(`${BASE_URL}Organizers.csv`);
         if (response.ok) {
           const organizersText = await response.text();
           setOrganizers(parseCSV(organizersText));
@@ -68,25 +73,26 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gfg-gradient-start to-gfg-gradient-end flex items-center justify-center relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center relative overflow-hidden bg-gradient-to-br from-gfg-gradient-start to-gfg-gradient-end">
+      <NeuralBackground />
       <div className="relative z-10 w-full max-w-md mx-4">
         <div className="text-center mb-8">
           <div className="mb-4">
-            <img src={gfgLogo} alt="GFG Logo" className="mx-auto h-24 sm:h-28" />
+            <AnimatedLogo src={logo} size={96} />
           </div>
-          <p className="text-gfg-gold text-lg font-body uppercase tracking-widest mb-2">GFG CAMPUS BODY KARE PRESENTS</p>
-          <h1 className="text-6xl font-extrabold text-gfg-text-light font-heading mb-4 tracking-tight">
-            HACK <span className="bg-gfg-red text-gfg-text-light px-2 py-1 leading-none inline-block">HEIST</span>
+          <p className="text-blue-500 text-lg font-body uppercase tracking-widest mb-2">acmkare / ACM PRESENTS</p>
+          <h1 className="text-4xl sm:text-6xl font-extrabold text-gfg-text-light font-heading mb-4 tracking-tight">
+            HACKARE <span className="bg-gfg-accent text-gfg-text-light px-2 py-1 leading-none inline-block">3.0</span>
           </h1>
-          <p className="text-gfg-gold text-lg font-body uppercase tracking-widest mb-2">ATTENDANCE SYSTEM</p>
+          <p className="text-blue-500 text-lg font-body uppercase tracking-widest mb-2">ATTENDANCE SYSTEM</p>
         </div>
         <div className="bg-gfg-card-bg rounded-lg shadow-2xl border border-gfg-border overflow-hidden">
           <div className="bg-gradient-to-r from-gfg-red to-gfg-red-hover p-4">
-            <h2 className="text-xl font-bold text-gfg-text-light text-center font-heading tracking-widest">ORGANIZER ACCESS</h2>
+            <h2 className="text-xl font-bold text-blue-500 text-center font-heading tracking-widest">ORGANIZER ACCESS</h2>
           </div>
           <form onSubmit={handleSubmit} className="p-6 space-y-4">
             <div>
-              <label htmlFor="email" className="block text-sm font-body font-medium text-gfg-text-dark mb-2 tracking-wide">ORGANIZER EMAIL</label>
+              <label htmlFor="email" className="block text-sm font-body font-medium text-blue-500 mb-2 tracking-wide">ORGANIZER EMAIL</label>
               <input
                 type="email" id="email" value={email}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
@@ -101,8 +107,10 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
                 <span className="text-sm font-body">{error}</span>
               </div>
             )}
-            <button type="submit" disabled={isLoading}
-              className="w-full bg-gfg-gold hover:bg-gfg-gold-hover text-gfg-card-bg py-3 px-4 rounded-lg font-bold font-heading hover:shadow-lg uppercase tracking-widest disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full bg-blue hover:bg-gray-100 text-gfg-text-dark border border-gfg-border py-3 px-4 rounded-lg font-bold font-heading hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-gfg-gold uppercase tracking-widest disabled:opacity-50 disabled:cursor-not-allowed transition-all"
             >
               {isLoading ? 'VERIFYING...' : 'LOGIN'}
             </button>

@@ -6,6 +6,9 @@ import QRScanner from './QRScanner';
 import { db } from '../firebase';
 import { ref, onValue, set, Unsubscribe } from 'firebase/database';
 
+// Resolve base URL safely (cast import.meta to any to avoid TS errors in environments missing vite types)
+const BASE_URL = ((import.meta as any).env && (import.meta as any).env.BASE_URL) || '/';
+
 // ... (keep the parseCSV function as it is)
 const parseCSV = (csvText: string): Omit<AttendanceRecord, 'session1' | 'session2' | 'session3' | 'lastUpdated' | 'userId'>[] => {
   const lines = csvText.trim().split('\n');
@@ -64,7 +67,7 @@ const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ user, onLogout 
     });
     const loadFromCSVAndSeedDatabase = async () => {
       try {
-        const response = await fetch(`${import.meta.env.BASE_URL}Participants.csv`);
+	const response = await fetch(`${BASE_URL}Participants.csv`);
         if (!response.ok) return;
         const csvText = await response.text();
         const parsedData = parseCSV(csvText);
@@ -202,15 +205,14 @@ const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ user, onLogout 
       <div className="bg-gfg-card-bg border-b border-gfg-border sticky top-0 z-10">
         <div className="max-w-6xl mx-auto px-4 py-4">
           <div className="flex justify-between items-center">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gfg-red rounded-full flex items-center justify-center">
-                <Users className="w-6 h-6 text-gfg-text-light" />
-              </div>
-              <div>
-                <h1 className="text-xl font-bold text-gfg-text-light font-heading tracking-wider">HACK HEIST</h1>
-                <p className="text-gfg-gold text-sm font-body tracking-wide">ORGANIZER CONTROL</p>
-              </div>
-            </div>
+					<div className="flex items-center space-x-3">
+							{/* small logo beside title */}
+							<img src={`${BASE_URL}ACM_LOGO.png`} alt="HACKARE logo" className="w-10 h-10 rounded-full object-cover" />
+							<div>
+								<h1 className="text-xl font-bold text-gfg-text-light font-heading tracking-wider">HACKARE 3.0</h1>
+								{/* subtitle removed/merged into title as requested */}
+							</div>
+						</div>
             <div className="flex items-center space-x-4">
               <div className="text-right text-sm">
                 <div className="text-gfg-text-dark">Logged in as</div>

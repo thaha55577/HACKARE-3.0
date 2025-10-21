@@ -152,7 +152,7 @@ const QRScanner: React.FC<QRScannerProps> = ({ onScan, scanResult, startScanner:
         {!isScanning ? (
           <button
             onClick={startScanner}
-            className="w-full flex items-center justify-center gap-2 bg-gfg-gold hover:bg-gfg-gold-hover text-gfg-card-bg py-3 px-4 rounded-lg font-bold font-heading uppercase tracking-widest transition-all disabled:opacity-50"
+            className="w-full flex items-center justify-center gap-2 bg-gfg-red hover:bg-gfg-red-hover text-gfg-text-light py-3 px-4 rounded-lg font-bold font-heading uppercase tracking-widest transition-all"
             disabled={!selectedCameraId}
           >
             <Camera className="w-5 h-5"/>

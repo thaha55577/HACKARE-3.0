@@ -3,6 +3,7 @@ import LoginPage from './components/LoginPage';
 import OrganizerDashboard from './components/OrganizerDashboard';
 import { User as UserType } from './types';
 
+
 function App() {
   const [currentUser, setCurrentUser] = useState<UserType | null>(null);
 

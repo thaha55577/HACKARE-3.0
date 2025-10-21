@@ -6,13 +6,14 @@ import { getDatabase } from 'firebase/database';
 // This is the object you will get from the Firebase console.
 
   const firebaseConfig = {
- apiKey: "AIzaSyC7EPnxkdnIP6G_2LLVthlUdiPhYGBpitg",
-  authDomain: "hack-heist-70c4a.firebaseapp.com",
-  projectId: "hack-heist-70c4a",
-  storageBucket: "hack-heist-70c4a.firebasestorage.app",
-  messagingSenderId: "714368783289",
-  appId: "1:714368783289:web:c7364e396e7ba4c3d29c68",
-  measurementId: "G-N3YBHVTN0P"
+ apiKey: "AIzaSyAJCy77bqYir0gMlaQNGysS4iMou6XP0pw",
+  authDomain: "acm-hackare.firebaseapp.com",
+  databaseURL: "https://acm-hackare-default-rtdb.firebaseio.com",
+  projectId: "acm-hackare",
+  storageBucket: "acm-hackare.firebasestorage.app",
+  messagingSenderId: "262713939425",
+  appId: "1:262713939425:web:b2aff32935c678bbfceea0",
+  measurementId: "G-ZDM2KQP3GP"
 };
 
 // Initialize Firebase with your configuration
