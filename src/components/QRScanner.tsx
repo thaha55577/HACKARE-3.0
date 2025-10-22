@@ -152,7 +152,7 @@ const QRScanner: React.FC<QRScannerProps> = ({ onScan, scanResult, startScanner:
         {!isScanning ? (
           <button
             onClick={startScanner}
-            className="w-full flex items-center justify-center gap-2 bg-gfg-red hover:bg-gfg-red-hover text-gfg-text-light py-3 px-4 rounded-lg font-bold font-heading uppercase tracking-widest transition-all"
+            className="w-full flex items-center justify-center gap-2 bg-gfg-dark-bg border hover:bg-gfg-red-hover text-gfg-text-light py-3 px-4 rounded-lg font-bold font-heading uppercase tracking-widest transition-all"
             disabled={!selectedCameraId}
           >
             <Camera className="w-5 h-5"/>
@@ -161,7 +161,7 @@ const QRScanner: React.FC<QRScannerProps> = ({ onScan, scanResult, startScanner:
         ) : (
           <button
             onClick={stopScanner}
-            className="w-full flex items-center justify-center gap-2 bg-gfg-red hover:bg-gfg-red-hover text-gfg-text-light py-3 px-4 rounded-lg font-bold font-heading uppercase tracking-widest transition-all"
+            className="w-full flex items-center justify-center gap-2 bg-gfg-dark-bg border hover:bg-gfg-red-hover text-gfg-text-light py-3 px-4 rounded-lg font-bold font-heading uppercase tracking-widest transition-all"
           >
             <XCircle className="w-5 h-5"/>
             Stop Scanner

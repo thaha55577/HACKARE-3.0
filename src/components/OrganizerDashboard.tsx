@@ -176,20 +176,25 @@ const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ user, onLogout 
   const exportToCSV = () => {
     const sessionStatusKey = `session${exportSession}` as keyof AttendanceRecord;
     const markedByKey = `session${exportSession}_markedBy` as keyof AttendanceRecord;
-    const headers = ['Registration_No', 'Name', 'Email', 'Team', `session${exportSession}_Status`, 'Marked_By', 'Last_Updated'];
-    const sessionAttendees = attendanceRecords.filter(record => record[sessionStatusKey] === true);
-    if (sessionAttendees.length === 0) {
-      alert(`No participants have been marked PRESENT for Session ${exportSession} yet.`);
-      return;
-    }
-    const csvContent = [
-      headers.join(','),
-      ...sessionAttendees.map(record => [
-        record.regNo, `"${record.name}"`, record.email, `"${record.team}"`, 'Present',
-        (record[markedByKey] as string | undefined) || 'N/A',
-        new Date(record.lastUpdated).toLocaleString()
-      ].join(','))
-    ].join('\n');
+		// Export all members (present and absent) for the selected session
+		const headers = ['Registration_No', 'Name', 'Email', 'Team', `session${exportSession}_Status`, 'Marked_By', 'Last_Updated'];
+		const sessionRows = attendanceRecords.map(record => {
+			const status = record[sessionStatusKey] === true ? 'Present' : 'Absent';
+			return [
+				record.regNo,
+				`"${record.name}"`,
+				record.email,
+				`"${record.team}"`,
+				status,
+				(record[markedByKey] as string | undefined) || 'N/A',
+				new Date(record.lastUpdated).toLocaleString()
+			].join(',');
+		});
+		if (sessionRows.length === 0) {
+			alert('No participant records available to export.');
+			return;
+		}
+		const csvContent = [headers.join(','), ...sessionRows].join('\n');
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -198,6 +203,42 @@ const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ user, onLogout 
     document.body.appendChild(a); a.click();
     window.URL.revokeObjectURL(url); document.body.removeChild(a);
   };
+
+	const exportAllSessionsToCSV = () => {
+		// Export every participant with status for all three sessions
+		if (attendanceRecords.length === 0) {
+			alert('No participant records available to export.');
+			return;
+		}
+		const headers = ['Registration_No', 'Name', 'Email', 'Team', 'session1_Status', 'session1_MarkedBy', 'session2_Status', 'session2_MarkedBy', 'session3_Status', 'session3_MarkedBy', 'Last_Updated'];
+		const rows = attendanceRecords.map(record => {
+			const s1 = record.session1 ? 'Present' : 'Absent';
+			const s2 = record.session2 ? 'Present' : 'Absent';
+			const s3 = record.session3 ? 'Present' : 'Absent';
+			return [
+				record.regNo,
+				`"${record.name}"`,
+				record.email,
+				`"${record.team}"`,
+				s1,
+				(record.session1_markedBy as string | undefined) || 'N/A',
+				s2,
+				(record.session2_markedBy as string | undefined) || 'N/A',
+				s3,
+				(record.session3_markedBy as string | undefined) || 'N/A',
+				new Date(record.lastUpdated).toLocaleString()
+			].join(',');
+		});
+
+		const csvContent = [headers.join(','), ...rows].join('\n');
+		const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+		const url = window.URL.createObjectURL(blob);
+		const a = document.createElement('a');
+		a.href = url;
+		a.download = `hack-heist-all-sessions-attendance-${new Date().toISOString().split('T')[0]}.csv`;
+		document.body.appendChild(a); a.click();
+		window.URL.revokeObjectURL(url); document.body.removeChild(a);
+	};
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gfg-gradient-start to-gfg-gradient-end font-body">
@@ -275,7 +316,7 @@ const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ user, onLogout 
                   <label htmlFor="regNo" className="block text-sm font-body font-medium text-gfg-text-dark mb-2">Registration No.</label>
                   <input type="text" id="regNo" value={manualRegNo} onChange={(e) => setManualRegNo(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && handleManualEntry()} className="w-full px-3 py-2 bg-gfg-dark-bg border border-gfg-border rounded-lg text-gfg-text-light" placeholder="Enter Registration No."/>
                 </div>
-                <button onClick={handleManualEntry} className="w-full bg-gfg-gold hover:bg-gfg-gold-hover text-gfg-card-bg py-3 px-4 rounded-lg font-bold font-heading flex items-center justify-center uppercase tracking-wider">
+                <button onClick={handleManualEntry} className="w-full bg-gfg-dark-bg border hover:bg-gfg-dark-hover text-gfg-text-dark py-3 px-4 rounded-lg font-bold font-heading flex items-center justify-center uppercase tracking-wider">
                   <UserCheck className="w-5 h-5 mr-2" /> Mark Present
                 </button>
                 {manualEntryMessage && <div className={`flex items-start space-x-2 p-3 rounded-lg border ${manualEntryMessage.type === 'success' ? 'text-green-400 bg-green-500/10 border-green-500/20' : 'text-gfg-gold bg-gfg-gold/10 border-gfg-gold/20'}`}><AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" /><span className="text-sm font-body">{manualEntryMessage.text}</span></div>}
@@ -288,10 +329,16 @@ const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ user, onLogout 
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
               <h2 className="text-2xl font-bold text-gfg-text-light font-heading tracking-wider">Attendance Records</h2>
               <div className="flex items-center gap-2 w-full sm:w-auto">
-                <select value={exportSession} onChange={(e) => setExportSession(Number(e.target.value))} className="px-3 py-2 bg-gfg-card-bg border border-gfg-border rounded-lg text-gfg-text-light focus:border-gfg-gold focus:ring-1 focus:ring-gfg-gold outline-none font-body">
-                  <option value={1}>Export session 1</option><option value={2}>Export session 2</option><option value={3}>Export session 3</option>
-                </select>
-                <button onClick={exportToCSV} className="flex flex-grow items-center justify-center space-x-2 bg-gfg-gold hover:bg-gfg-gold-hover text-gfg-card-bg px-4 py-2 rounded-lg transition-colors uppercase font-heading"><Download className="w-4 h-4" /><span>Export</span></button>
+							<select value={exportSession} onChange={(e) => setExportSession(Number(e.target.value))} className="px-3 py-2 bg-gfg-card-bg border border-gfg-border rounded-lg text-gfg-text-white focus:border-gfg-gold focus:ring-1 focus:ring-gfg-gold outline-none font-body">
+					<option value={1}>Export session 1</option><option value={2}>Export session 2</option><option value={3}>Export session 3</option>
+				</select>
+				<div className="flex gap-2 w-full sm:w-auto">
+					<button onClick={exportToCSV} className="flex-1 flex items-center justify-center space-x-2 bg-gfg-light-bg border hover:bg-gfg-gold-hover text-gfg-white-bg px-4 py-2 rounded-lg transition-colors uppercase font-heading"><Download className="w-4 h-4" /><span>Export</span></button>
+					<button onClick={exportAllSessionsToCSV} className="flex-1 flex items-center justify-center space-x-2 bg-gfg-card-bg border hover:bg-gfg-border text-gfg-text-dark px-4 py-2 rounded-lg transition-colors uppercase font-heading">
+						<Download className="w-4 h-4" />
+						<span>Export All Sessions</span>
+					</button>
+				</div>
               </div>
             </div>
             {attendanceRecords.length === 0 ? <div className="text-center py-10 bg-gfg-card-bg rounded-lg"><p className="text-gfg-text-dark font-body">Loading attendance data...</p></div> : <AttendanceTable records={attendanceRecords} />}
