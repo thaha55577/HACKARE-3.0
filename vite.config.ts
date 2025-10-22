@@ -8,7 +8,7 @@ export default defineConfig({
     react(),
     basicSsl()
   ],
-  base: '/HACK_HEIST/',
+  base: '/ACMKARE-3.0/',
   server: {
     host: true, // Allows access from your mobile device
     https: {}  // Enables HTTPS
